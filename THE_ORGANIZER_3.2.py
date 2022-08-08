@@ -177,7 +177,7 @@ def arrange_audios():
 
 
 def arrange_other():
-    file_to_be_skipped = ["THE_ORGANIZER_3.0.exe", "DumpStack.log.tmp"]
+    file_to_be_skipped = ["THE_ORGANIZER_3.2.exe", "DumpStack.log.tmp"]
     others_ext = []
     try:
         for file in files:
