@@ -4,7 +4,9 @@ from time import sleep
 
 # ALL THE EXT DATABASES
 database = {}
-with open("extensions.json") as json_file:  # source: https://github.com/dyne/file-extension-list
+with open(
+    "extensions.json"
+) as json_file:  # source: https://github.com/dyne/file-extension-list
     database = json.load(json_file)
 
 # FILE LIST
@@ -58,20 +60,14 @@ def arrange_docs():
             in database["sheet"] + database["slide"] + database["text"]
         ]
 
-        print("\nSearching for Documents", end="")
-        for _ in range(10):
-            print(".", end="")
-            sleep(0.2)
+        _search_display("Documents")
         print("Done")
         if not documents:
             print("No documents found !!")
         else:
             print(f"Found {len(documents)} documents !!")
-            print("\nSearching for 'Documents' directory", end="")
-            for _ in range(10):
-                print(".", end="")
-                sleep(0.2)
-            if os.path.exists("Documents") == False:
+            _search_display("'Documents' directory")
+            if os.path.exists("Documents") is False:
                 print("Not Found !!\nSo creating", end="")
                 for _ in range(10):
                     print(".", end="")
@@ -155,6 +151,35 @@ def arrange_audios():
         print(f"\nI have encountered an unexpected error :(\nError : {error}")
 
 
+def arrange_archive():
+    try:
+        archive = [
+            file
+            for file in files
+            if os.path.splitext(file)[1].lower() in database["archive"]
+        ]
+        _search_display("Archives")
+        if not archive:
+            print("No archive found !!")
+        else:
+            print(f"Found {len(archive)} archive !!")
+            _search_display("'Archives' directory")
+            if os.path.exists("Archives") is False:
+                print("Not Found !!\nSo creating", end="")
+                for _ in range(10):
+                    print(".", end="")
+                sleep(0.2)
+                os.mkdir("archive")
+                print("Done!!")
+            else:
+                print("Found !!")
+            for item in archive:
+                os.replace(item, f"archive/{item}")
+            print(f"Successfully Moved {len(archive)} archive files in 'Archives' folder")
+    except Exception as error:
+        print(f"\nI have encountered an unexpected error :(\nError : {error}")
+
+
 def arrange_other():
     file_to_be_skipped = ["THE_ORGANIZER_3.2.exe", "DumpStack.log.tmp"]
     others_ext = []
@@ -169,6 +194,7 @@ def arrange_other():
                 + database["text"]
                 + database["video"]
                 + database["audio"]
+                + database["archive"]
                 and os.path.isfile(file)
                 and os.path.basename(file) not in file_to_be_skipped
             ):
@@ -178,7 +204,6 @@ def arrange_other():
             print("No others files found !!")
         else:
             print(f"Found {len(others_ext)} others files !!")
-            print("\nSearching for 'Others' directory", end="")
             _search_display("'Others' directory")
             if os.path.exists("Others") == False:
                 print("Not Found !!\nSo creating", end="")
@@ -231,9 +256,23 @@ if __name__ == "__main__":
     print("Note : Press 'q' to exit anytime\n")
     print(f"ATTENTION !!\nCurrent working directory is : {os.getcwd()}\n")
     while True:
-        user_choice = input(
-            "Options Available :- \n1. Arrange Images\n2. Arrange Documents\n3. Arrange Videos\n4. Arrange Audio Files\n5. Arrange Other Files\n6. Clear Empty folders \n7. Arrange All File Type\n\nSo BOSS !! What you wanna do ?\nAns : "
+        print(
+            "Options Available:-",
+            "1. Arrange Images",
+            "2. Arrange Documents",
+            "3. Arrange Videos",
+            "4. Arrange Audio Files",
+            "5. Arrange Archives",
+            "6. Other Files",
+            "7. Clear Empty folders",
+            "8. Arrange All File Type",
+            "",
+            "So BOSS !! What you wanna do?",
+            "Ans:",
+            sep="\n",
+            end=" ",
         )
+        user_choice = input()
         if user_choice.lower() == "q":
             print(be_organised_text)
             break
@@ -250,11 +289,13 @@ if __name__ == "__main__":
             arrange_audios()
             print(be_organised_text)
         elif user_choice == "5":
-            arrange_other()
+            arrange_archive()
             print(be_organised_text)
         elif user_choice == "6":
-            delete_empty_folder()
+            arrange_other()
         elif user_choice == "7":
+            delete_empty_folder()
+        elif user_choice == "8":
             arrange_images()
             arrange_docs()
             arrange_videos()
