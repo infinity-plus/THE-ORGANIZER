@@ -27,7 +27,7 @@ def arrange_images():
         images = [
             file
             for file in files
-            if os.path.splitext(file)[1].lower() in database["image"]
+            if os.path.splitext(file)[1].lower()[1:] in database["image"]
         ]
         _search_display("Images")
         if not images:
@@ -56,12 +56,11 @@ def arrange_docs():
         documents = [
             file
             for file in files
-            if os.path.splitext(file)[1].lower()
+            if os.path.splitext(file)[1].lower()[1:]
             in database["sheet"] + database["slide"] + database["text"]
         ]
 
         _search_display("Documents")
-        print("Done")
         if not documents:
             print("No documents found !!")
         else:
@@ -91,14 +90,10 @@ def arrange_videos():
         videos = [
             file
             for file in files
-            if os.path.splitext(file)[1].lower() in database["video"]
+            if os.path.splitext(file)[1].lower()[1:] in database["video"]
         ]
 
-        print("\nSearching for Videos", end="")
-        for _ in range(10):
-            print(".", end="")
-            sleep(0.2)
-        print("Done")
+        _search_display("Videos")
         if not videos:
             print("No videos found !!")
         else:
@@ -123,13 +118,9 @@ def arrange_audios():
         audios = [
             file
             for file in files
-            if os.path.splitext(file)[1].lower() in database["audio"]
+            if os.path.splitext(file)[1].lower()[1:] in database["audio"]
         ]
-        print("\nSearching for Audios", end="")
-        for _ in range(10):
-            print(".", end="")
-            sleep(0.2)
-        print("Done")
+        _search_display("Audios")
         if not audios:
             print("No audio found !!")
         else:
@@ -156,7 +147,7 @@ def arrange_archive():
         archive = [
             file
             for file in files
-            if os.path.splitext(file)[1].lower() in database["archive"]
+            if os.path.splitext(file)[1].lower()[1:] in database["archive"]
         ]
         _search_display("Archives")
         if not archive:
@@ -169,13 +160,15 @@ def arrange_archive():
                 for _ in range(10):
                     print(".", end="")
                 sleep(0.2)
-                os.mkdir("archive")
+                os.mkdir("Archives")
                 print("Done!!")
             else:
                 print("Found !!")
             for item in archive:
                 os.replace(item, f"archive/{item}")
-            print(f"Successfully Moved {len(archive)} archive files in 'Archives' folder")
+            print(
+                f"Successfully Moved {len(archive)} archive files in 'Archives' folder"
+            )
     except Exception as error:
         print(f"\nI have encountered an unexpected error :(\nError : {error}")
 
@@ -185,7 +178,7 @@ def arrange_other():
     others_ext = []
     try:
         for file in files:
-            ext = os.path.splitext(file)[1].lower()
+            ext = os.path.splitext(file)[1].lower()[1:]
             if (
                 ext
                 not in database["image"]
@@ -300,6 +293,7 @@ if __name__ == "__main__":
             arrange_docs()
             arrange_videos()
             arrange_audios()
+            arrange_archive()
             arrange_other()
             delete_empty_folder()
             print(be_organised_text)
