@@ -1,66 +1,41 @@
+import json
 import os
 from time import sleep
 
 # ALL THE EXT DATABASES
-img_ext = [
-    ".img",
-    ".tiff",
-    ".psd",
-    ".indd",
-    ".eps",
-    ".ai",
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".raw",
-]
-doc_ext = [".doc", ".htm", ".odt", ".pdf", ".xls", ".xlsx", ".ods", ".ppt", ".txt"]
-video_ext = [
-    ".webm",
-    ".mpg",
-    ".mp2",
-    ".mpeg",
-    ".mpe",
-    ".mpv",
-    ".ogg",
-    ".mp4",
-    ".m4p",
-    ".m4v",
-    ".avi",
-    ".wmv",
-    ".mov",
-    ".qt",
-    ".flv",
-    ".swf",
-    ".mkv",
-]
-audio_ext = [".m4a", ".alac", ".aiff", ".pcm", ".flac", ".mp3", ".wav", ".wma", ".aac"]
+database = {}
+with open("extensions.json") as json_file:  # source: https://github.com/dyne/file-extension-list
+    database = json.load(json_file)
 
 # FILE LIST
 files = os.listdir()
+
+
+def _search_display(search_element: str):
+    print(f"Searching for {search_element}", end="")
+    for _ in range(10):
+        print(".", end="")
+        sleep(0.2)
+    print("\nDone")
+
 
 # ALL FUNCTIONS
 def arrange_images():
     try:
         images = [
-            file for file in files if os.path.splitext(file)[1].lower() in img_ext
+            file
+            for file in files
+            if os.path.splitext(file)[1].lower() in database["image"]
         ]
-        print("\nSearching for Images", end="")
-        for i in range(10):
-            print(".", end="")
-            sleep(0.2)
-        print("Done")
-        if len(images) == 0:
+        _search_display("Images")
+        if not images:
             print("No images found !!")
         else:
             print(f"Found {len(images)} images !!")
-            print("\nSearching for 'Images' directory", end="")
-            for i in range(10):
-                print(".", end="")
-                sleep(0.2)
+            _search_display("'Images' directory")
             if os.path.exists("Images") == False:
                 print("Not Found !!\nSo creating", end="")
-                for i in range(10):
+                for _ in range(10):
                     print(".", end="")
                 sleep(0.2)
                 os.mkdir("Images")
@@ -77,24 +52,28 @@ def arrange_images():
 def arrange_docs():
     try:
         documents = [
-            file for file in files if os.path.splitext(file)[1].lower() in doc_ext
+            file
+            for file in files
+            if os.path.splitext(file)[1].lower()
+            in database["sheet"] + database["slide"] + database["text"]
         ]
+
         print("\nSearching for Documents", end="")
-        for i in range(10):
+        for _ in range(10):
             print(".", end="")
             sleep(0.2)
         print("Done")
-        if len(documents) == 0:
+        if not documents:
             print("No documents found !!")
         else:
             print(f"Found {len(documents)} documents !!")
             print("\nSearching for 'Documents' directory", end="")
-            for i in range(10):
+            for _ in range(10):
                 print(".", end="")
                 sleep(0.2)
             if os.path.exists("Documents") == False:
                 print("Not Found !!\nSo creating", end="")
-                for i in range(10):
+                for _ in range(10):
                     print(".", end="")
                 sleep(0.2)
                 os.mkdir("Documents")
@@ -106,6 +85,7 @@ def arrange_docs():
             print(
                 f"Successfully Moved {len(documents)} document files in 'Documents' folder"
             )
+
     except Exception as error:
         print(f"\nI have encountered an unexpected error :(\nError : {error}")
 
@@ -113,24 +93,24 @@ def arrange_docs():
 def arrange_videos():
     try:
         videos = [
-            file for file in files if os.path.splitext(file)[1].lower() in video_ext
+            file
+            for file in files
+            if os.path.splitext(file)[1].lower() in database["video"]
         ]
+
         print("\nSearching for Videos", end="")
-        for i in range(10):
+        for _ in range(10):
             print(".", end="")
             sleep(0.2)
         print("Done")
-        if len(videos) == 0:
+        if not videos:
             print("No videos found !!")
         else:
             print(f"Found {len(videos)} videos !!")
-            print("\nSearching for 'Videos' directory", end="")
-            for i in range(10):
-                print(".", end="")
-                sleep(0.2)
+            _search_display("'Videos' directory")
             if os.path.exists("Videos") == False:
                 print("Not Found !!\nSo creating", end="")
-                for i in range(10):
+                for _ in range(10):
                     print(".", end="")
                 sleep(0.2)
                 os.mkdir("Videos")
@@ -145,24 +125,23 @@ def arrange_videos():
 def arrange_audios():
     try:
         audios = [
-            file for file in files if os.path.splitext(file)[1].lower() in audio_ext
+            file
+            for file in files
+            if os.path.splitext(file)[1].lower() in database["audio"]
         ]
         print("\nSearching for Audios", end="")
-        for i in range(10):
+        for _ in range(10):
             print(".", end="")
             sleep(0.2)
         print("Done")
-        if len(audios) == 0:
+        if not audios:
             print("No audio found !!")
         else:
             print(f"Found {len(audios)} audios !!")
-            print("\nSearching for 'Audios' directory", end="")
-            for i in range(10):
-                print(".", end="")
-                sleep(0.2)
-            if os.path.exists("Audios") == False:
+            _search_display("'Audios' Directory")
+            if os.path.exists("Audios") is False:
                 print("Not Found !!\nSo creating", end="")
-                for i in range(10):
+                for _ in range(10):
                     print(".", end="")
                 sleep(0.2)
                 os.mkdir("Audios")
@@ -183,30 +162,27 @@ def arrange_other():
         for file in files:
             ext = os.path.splitext(file)[1].lower()
             if (
-                (ext not in img_ext)
-                and (ext not in doc_ext)
-                and (ext not in video_ext)
-                and (ext not in audio_ext)
+                ext
+                not in database["image"]
+                + database["sheet"]
+                + database["slide"]
+                + database["text"]
+                + database["video"]
+                + database["audio"]
                 and os.path.isfile(file)
-                and (os.path.basename(file) not in file_to_be_skipped)
+                and os.path.basename(file) not in file_to_be_skipped
             ):
                 others_ext.append(file)
-        print("\nSearching for other files", end="")
-        for i in range(10):
-            print(".", end="")
-            sleep(0.2)
-        print("Done")
-        if len(others_ext) == 0:
+        _search_display("Other files")
+        if not others_ext:
             print("No others files found !!")
         else:
             print(f"Found {len(others_ext)} others files !!")
             print("\nSearching for 'Others' directory", end="")
-            for i in range(10):
-                print(".", end="")
-                sleep(0.2)
+            _search_display("'Others' directory")
             if os.path.exists("Others") == False:
                 print("Not Found !!\nSo creating", end="")
-                for i in range(10):
+                for _ in range(10):
                     print(".", end="")
                 sleep(0.2)
                 os.mkdir("Others")
@@ -226,18 +202,14 @@ def delete_empty_folder():
     try:
         empty_folders = []
         count = 0
-        print("\nSearching for Empty folders", end="")
-        for i in range(10):
-            print(".", end="")
-            sleep(0.3)
+        _search_display("Empty folders")
         for file in files:
-            if os.path.isdir(file) == True:
-                if len(os.listdir(file)) == 0:
-                    empty_folders.append(file)
-                    count += 1
-                    os.rmdir(file)
+            if os.path.isdir(file) and len(os.listdir(file)) == 0:
+                empty_folders.append(file)
+                count += 1
+                os.rmdir(file)
         print("Done !!")
-        if len(empty_folders) != 0:
+        if not empty_folders:
             print(f"Successfully deleted {count} empty folders\n")
         else:
             print("No empty folders found !!\n")
